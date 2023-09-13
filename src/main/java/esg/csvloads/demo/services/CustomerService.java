@@ -48,26 +48,38 @@ public class CustomerService {
     }
 
 
-    public List<Customer> findCustomersByPostcode(String postcode){
-      return repository.findByPostcode(postcode);
+    public List<Customer> findCustomersByPostcode(String postcode) {
+        try {
+            return repository.findByPostcode(postcode);
+        } catch (NullPointerException e) {
+            System.out.println("No customers were found with the specified postcode");
+            return null;
+        }
     }
     public List<Customer> findCustomersByCountry(String country){
+
+      try {
       return repository.findByCountry(country);
+
+    } catch (NullPointerException e) {
+        System.out.println("No customers were found with the specified country");
+        return null;
     }
+  }
     public List<Customer> saveCustomersFromJson(List<JSONObject> jsonList) {
       try {
           List<Customer> customers = new ArrayList<>();
           for(JSONObject jObj : jsonList){
                     Customer customer = objectMapper.readValue(jObj.toString(), Customer.class);
                     customers.add(customer);
-                    System.out.println(customer.toString());
+
                 }
 
                 // Save the Customer entity using the repository
                 return (List<Customer>) repository.saveAll(customers);
             } catch (Exception e) {
                 e.printStackTrace();
-                // Handle any exceptions appropriately
+
                 return null;
             }
         }
